@@ -17,30 +17,21 @@
 ;==========================================================
 
 [colors]
-background = #021C28
-background-alt = #042e3c
+background = #181820
+background-alt = #44444b
 foreground = #C5C8C6
-primary = #F9767F
-secondary = #8ABEB7
-alert = #A54242
-disabled = #CD5063
+primary = #aeaddf
+text = #f7f7f7
+text_alt = #44444b
+test_color = #66ff00
 
-[bar/example]
+[bar/mainbar]
 width = 100%
 height = 26pt
-;radius = 6
 bottom = true
 
-
-; dpi = 96
-
 background = ${colors.background}
-foreground = ${colors.foreground}
-
-line-size = 3pt
-
-;border-size = 4pt
-;border-color = #00000000
+foreground = ${colors.text}
 
 padding-left = 0
 padding-right = 1
@@ -48,45 +39,41 @@ padding-right = 1
 module-margin = 1
 
 separator = |
-separator-foreground = ${colors.disabled}
+separator-foreground = ${colors.text_alt}
 
 font-0 = "Fira Code:size=12"
 
 modules-left = xworkspaces xwindow
-modules-center = date
-modules-right = pulseaudio memory cpu battery network
+modules-center = date menu-apps
+modules-right = pulseaudio filesystem memory cpu network 
+; not sure on filesystem yet
 
 cursor-click = pointer
 cursor-scroll = ns-resize
 
 enable-ipc = true
 
-; tray-position = right
-
-; wm-restack = generic
-; wm-restack = bspwm
-; wm-restack = i3
-
-; override-redirect = true
-
 [module/xworkspaces]
 type = internal/xworkspaces
 
 label-active = %name%
 label-active-background = ${colors.background-alt}
-label-active-underline= ${colors.disabled}
+label-active-underline= ${colors.text_alt}
 label-active-padding = 1
 
 label-occupied = %name%
 label-occupied-padding = 1
 
 label-urgent = %name%
-label-urgent-background = ${colors.alert}
+label-urgent-background = ${colors.text_alt}
 label-urgent-padding = 1
 
 label-empty = %name%
-label-empty-foreground = ${colors.disabled}
+label-empty-foreground = ${colors.text_alt}
 label-empty-padding = 1
+
+enable_click = false
+enable_scroll = false
 
 [module/xwindow]
 type = internal/xwindow
@@ -94,14 +81,13 @@ label = %title:0:60:...%
 
 [module/filesystem]
 type = internal/fs
-interval = 25
 
 mount-0 = /
 
 label-mounted = "%mountpoint%: %percentage_free%% of %total%"
 
 label-unmounted = %mountpoint% not mounted
-label-unmounted-foreground = ${colors.disabled}
+label-unmounted-foreground = ${colors.text_alt}
 
 [module/pulseaudio]
 type = internal/pulseaudio
@@ -113,19 +99,7 @@ format-volume = <label-volume>
 label-volume = %percentage%%
 
 label-muted = muted
-label-muted-foreground = ${colors.disabled}
-
-[module/xkeyboard]
-type = internal/xkeyboard
-blacklist-0 = num lock
-
-label-layout = %layout%
-label-layout-foreground = ${colors.primary}
-
-label-indicator-padding = 2
-label-indicator-margin = 1
-label-indicator-foreground = ${colors.background}
-label-indicator-background = ${colors.secondary}
+label-muted-foreground = ${colors.text_alt}
 
 [module/memory]
 type = internal/memory
@@ -143,16 +117,16 @@ label = %percentage:2%%
 
 [module/network]
 type = internal/network
-interface = wlp3s0 
-interface-type = wireless
+interface = enp1s0
+interface-type = wired
 accumulate-stats = true
-
-interval = 1.0
+unknown-as-up = true
 
 format-connected = <label-connected>
-label-connected = "%signal%% @%essid%"
+label-connected-prefix = 
+label-connected = "localhost:6969/ %downspeed%"
 label-connected-background = ${colors.background}
-label-connected-foreground = ${colors.secondary}
+label-connected-foreground = ${colors.text}
 
 [module/battery]
 type = internal/battery
@@ -163,7 +137,6 @@ format-charging-prefix-foreground = ${colors.primary}
 format-discharging-prefix = "BAT "
 format-discharging-prefix-foreground = ${colors.primary}
 
-
 [module/date]
 type = internal/date
 interval = 1
@@ -173,8 +146,42 @@ date = %Y-%m-%d
 
 label = %date% %time%
 
-[settigs]
-screenchange-reload = true
-pseudo-transparency = true
+[module/menu-apps]
+type = custom/menu
 
-; vim:ft=dosinin
+; If true, <label-toggle> will be to the left of the menu items (default).
+; If false, it will be on the right of all the items.
+expand-right = true
+
+; "menu-LEVEL-N" has the same properties as "label-NAME" with
+; the additional "exec" property
+;
+; Commands will be executed using "/bin/sh -c $COMMAND"
+
+menu-0-0 = Common
+menu-0-0-exec = #menu-apps.open.1
+menu-0-1 = System
+menu-0-1-exec = #menu-apps.open.2
+
+menu-1-0 = Firefox
+menu-1-0-exec = firefox
+menu-1-1 = VSCode
+menu-1-1-exec = code
+menu-1-2 = Spotify
+menu-1-2-exec = spotify
+menu-1-3 = Discord
+menu-1-3-exec = discord
+
+menu-2-0 = Poweroff
+menu-2-0-exec = shutdown
+menu-2-1 = Restart
+menu-2-1-exec = shutdown -r 
+menu-2-2 = Settings
+menu-2-2-exec = gnome-control-center 
+
+label-open = menu
+label-close = x
+
+; Optional item separator
+; Default: none
+label-separator = |
